@@ -1,0 +1,35 @@
+Option Explicit
+Sub Send_Mails()
+Dim sh As Worksheet
+Set sh = ThisWorkbook.Sheets("Send_Emails")
+Dim i As Integer
+
+Dim OA As Object
+Dim msg As Object
+
+Set OA = CreateObject("outlook.application")
+
+Dim last_row As Integer
+last_row = Application.CountA(sh.Range("A:A"))
+
+For i = 2 To last_row
+    Set msg = OA.createitem(0)
+    msg.bcc = sh.Range("B" & i).Value
+    msg.Subject = sh.Range("C" & i).Value
+    msg.body = sh.Range("D" & i).Value
+    msg.To = sh.Range("A" & i).Value
+
+    If sh.Range("E" & i).Value <> "" Then
+        msg.attachments.Add sh.Range("E" & i).Value
+    End If
+    
+    msg.send
+    
+    sh.Range("F" & i).Value = "Sent"
+
+Next i
+
+MsgBox "All the emails have been sent successfully"
+
+
+End Sub
