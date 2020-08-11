@@ -1,7 +1,7 @@
 Option Explicit
 Sub Send_Mails()
 Dim sh As Worksheet
-Set sh = ThisWorkbook.Sheets("Send_Emails")
+Set sh = ThisWorkbook.Sheets("ACTUAL LIST")    ' change based on sheet name  
 Dim i As Integer
 
 Dim OA As Object
@@ -10,22 +10,32 @@ Dim msg As Object
 Set OA = CreateObject("outlook.application")
 
 Dim last_row As Integer
-last_row = Application.CountA(sh.Range("A:A"))
+last_row = Application.CountA(sh.Range("A:A"))  
+' A:A here is the column with all of the names in it, this solution was built around having a sheet set up like our mailing list currently is, don't need to build a new sheet around it
 
-For i = 2 To last_row
-    Set msg = OA.createitem(0)
-    msg.bcc = sh.Range("B" & i).Value
-    msg.Subject = sh.Range("C" & i).Value
-    msg.body = sh.Range("D" & i).Value
-    msg.To = sh.Range("A" & i).Value
+Set msg = OA.createitem(0)
 
-    If sh.Range("E" & i).Value <> "" Then
-        msg.attachments.Add sh.Range("E" & i).Value
-    End If
+msg.Subject = sh.Range("F5").Value 
+msg.body = sh.Range("F6").Value
+msg.To = sh.Range("F2").Value
+' don't actually need to iterate these since they don't change, is this what you meant by static?
+' HOWEVER, the create msg above might need to iterate 
+
+If sh.Range("F7").Value <> "" Then
+    msg.attachments.Add sh.Range("F7").Value
+End If
+
+If sh.Range("F3").Value == "LIST" Then
+	For i = 2 To last_row
+		msg.bcc = sh.Range("A" & i).Value
+	
+	If sh.Range("F8").Value == "TRUE" Then
+		msg.send
+	Else
+		' something to save it instead of sending
+	End If
     
-    msg.send
-    
-    sh.Range("F" & i).Value = "Sent"
+    sh.Range("B" & i).Value = "Sent"
 
 Next i
 
