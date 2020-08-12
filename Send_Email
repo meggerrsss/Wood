@@ -2,36 +2,39 @@ Option Explicit
 Sub Send_Mails()
 Dim sh As Worksheet
 
-Set sh = ThisWorkbook.Sheets("List 1")
+Dim j As Integer
 
-Dim iCounter As Integer
-Dim Dest As Variant
-Dim SDest As String
+For j=1 To Worksheets.Count  'Start of the VBA loop
+	Set sh = Sheets(j).Name   
 
-Dim OA As Object
-Dim msg As Object
+	Dim iCounter As Integer
+	Dim Dest As Variant
+	Dim SDest As String
 
-Set OA = CreateObject("outlook.application")
-Set msg = OA.createitem(0)
+	Dim OA As Object
+	Dim msg As Object
 
-With msg
-       SDest = ""
-       For iCounter = 2 To WorksheetFunction.CountA(Columns(2))
-           If SDest = "" Then
-               SDest = Cells(iCounter, 2).Value
-           Else
-               SDest = SDest & ";" & Cells(iCounter, 2).Value
-           End If
-       Next iCounter
+	Set OA = CreateObject("outlook.application")
+	Set msg = OA.createitem(0)
 
-    msg.BCC = SDest
-    msg.Subject = sh.Cells(2, 3).Value
-    msg.body = sh.Cells(2, 4).Value
-    msg.To = sh.Cells(2, 1).Value
-    msg.display
-End With
+	With msg
+		   SDest = ""
+		   For iCounter = 2 To WorksheetFunction.CountA(Columns(2))
+			   If SDest = "" Then
+				   SDest = Cells(iCounter, 2).Value
+			   Else
+				   SDest = SDest & ";" & Cells(iCounter, 2).Value
+			   End If
+		   Next iCounter
 
-MsgBox "All the emails have been sent successfully"
+		msg.BCC = SDest
+		msg.Subject = sh.Cells(2, 3).Value
+		msg.body = sh.Cells(2, 4).Value
+		msg.To = sh.Cells(2, 1).Value
+		msg.display
+	End With
 
+	MsgBox sh.Name & ": All the emails have been sent successfully"
+Next j
 
 End Sub
