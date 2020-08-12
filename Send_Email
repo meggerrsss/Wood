@@ -1,43 +1,35 @@
 Option Explicit
 Sub Send_Mails()
 Dim sh As Worksheet
-Set sh = ThisWorkbook.Sheets("ACTUAL LIST")    ' change based on sheet name  
-Dim i As Integer
+
+Set sh = ThisWorkbook.Sheets("List 1")
+
+Dim iCounter As Integer
+Dim Dest As Variant
+Dim SDest As String
 
 Dim OA As Object
 Dim msg As Object
 
 Set OA = CreateObject("outlook.application")
-
-Dim last_row As Integer
-last_row = Application.CountA(sh.Range("A:A"))  
-' A:A here is the column with all of the names in it, this solution was built around having a sheet set up like our mailing list currently is, don't need to build a new sheet around it
-
 Set msg = OA.createitem(0)
 
-msg.Subject = sh.Range("F5").Value 
-msg.body = sh.Range("F6").Value
-msg.To = sh.Range("F2").Value
-' don't actually need to iterate these since they don't change, is this what you meant by static?
-' HOWEVER, the create msg above might need to iterate 
+With msg
+       SDest = ""
+       For iCounter = 2 To WorksheetFunction.CountA(Columns(2))
+           If SDest = "" Then
+               SDest = Cells(iCounter, 2).Value
+           Else
+               SDest = SDest & ";" & Cells(iCounter, 2).Value
+           End If
+       Next iCounter
 
-If sh.Range("F7").Value <> "" Then
-    msg.attachments.Add sh.Range("F7").Value
-End If
-
-If sh.Range("F3").Value == "LIST" Then
-	For i = 2 To last_row
-		msg.bcc = sh.Range("A" & i).Value
-	
-	If sh.Range("F8").Value == "TRUE" Then
-		msg.send
-	Else
-		' something to save it instead of sending
-	End If
-    
-    sh.Range("B" & i).Value = "Sent"
-
-Next i
+    msg.BCC = SDest
+    msg.Subject = sh.Cells(2, 3).Value
+    msg.body = sh.Cells(2, 4).Value
+    msg.To = sh.Cells(2, 1).Value
+    msg.display
+End With
 
 MsgBox "All the emails have been sent successfully"
 
