@@ -31,8 +31,8 @@ class Tool (SmartScript.SmartScript):
         keys = Wx[1]
 
         #Rain
-        wxValues=np.where(np.logical_and.reduce([np.greater(TFcst, 1.4), np.greater(QPFFcst, 0), np.less(QPFFcst, 0.5)]), self.getIndex("SChc:L:-:<NoVis>:", keys), wxValues)
-        wxValues=np.where(np.logical_and.reduce([np.greater(TFcst, 1.4), np.greater_equal(QPFFcst, 0.5), np.less(QPFFcst, 1.5)]), self.getIndex("SChc:RW:-:<NoVis>:", keys), wxValues)
+        #wxValues=np.where(np.logical_and.reduce([np.greater(TFcst, 1.4), np.greater(QPFFcst, 0), np.less(QPFFcst, 0.5)]), self.getIndex("SChc:L:-:<NoVis>:", keys), wxValues)
+        wxValues=np.where(np.logical_and.reduce([np.greater(TFcst, 1.4), np.greater(QPFFcst, 0), np.less(QPFFcst, 1.5)]), self.getIndex("SChc:RW:-:<NoVis>:", keys), wxValues)
         wxValues=np.where(np.logical_and.reduce([np.greater(TFcst, 1.4), np.greater_equal(QPFFcst, 1.5)]), self.getIndex("SChc:R:-:<NoVis>:", keys), wxValues)
         #Rain/Snow Mix
         wxValues=np.where(np.logical_and.reduce([np.less_equal(TFcst, 1.4), np.greater(TFcst, 0.4), np.greater(QPFFcst, 0)]), self.getIndex("Brf:RW:-:<NoVis>:^Brf:SW:-:<NoVis>:", keys), wxValues)
