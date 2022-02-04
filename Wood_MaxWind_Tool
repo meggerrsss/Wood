@@ -12,6 +12,9 @@
 # This tool will output the max or min temps from all models available in the domain
 # ----------------------------------------------------------------------------
 
+
+HideTool=1
+
 ToolType = "numeric"
 WeatherElementEdited = "Wind"
 
@@ -33,7 +36,7 @@ class Tool (SmartScript.SmartScript):
         SmartScript.SmartScript.__init__(self, dbss)
 
     def execute(self, Wind, GridTimeRange, varDict):
-       SITE=self.getSiteID()
+        SITE=self.getSiteID()
 
         yess=varDict["Yes"]
         MaxorMin=varDict["Max or Min Model Winds:"]
@@ -92,40 +95,40 @@ class Tool (SmartScript.SmartScript):
 
         if (yess == "Yes"):
             try:
-                WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)
+                WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)[0]
             except:
                 pass
         if (yess == "Yes"):
             try:
-                WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)
+                WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)[0]
             except:
                 pass
         if (yess == "Yes"):
             try:
-                WGDPS = self.getGrids(modelWGDPS, "Wind", "SFC", GridTimeRange)
+                WGDPS = self.getGrids(modelWGDPS, "Wind", "SFC", GridTimeRange)[0]
             except:
                 pass
         if (yess == "Yes"):
             try:
-                WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)
+                WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
             except:
                 pass
         if (yess == "Yes"):
             try:
-                WGFS25 = self.getGrids(modelWGFS25, "Wind", "SFC", GridTimeRange)
+                WGFS25 = self.getGrids(modelWGFS25, "Wind", "SFC", GridTimeRange)[0]
             except:
                 pass
         if (yess == "Yes"):
             try:
-                WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)
+                WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
             except:
                 pass
 
-        NAM12Speed = WNAM12[0]
-        NAM32Speed = WNAM32[0]   
-        WNAM12=self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)
-        WNAM32=self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)
-        WNAM=np.where(np.logical_and.reduce([np.equal(NAM12Speed, 0)]), modelWNAM32, WNAM)
+        WNAM12=self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
+        WNAM32=self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
+        WNAM=np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), modelWNAM32, WNAM)
+
+        dir = self.getGrids(modelWind, "Wind", "SFC", GridTimeRange)[1]
         
         if MaxorMin == "Max":
             Temp = WGDPS
@@ -176,5 +179,5 @@ class Tool (SmartScript.SmartScript):
             if (WHRDPS == None and WRDPS == None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
             
-        return Temp
+        return (Temp, dir)
 
