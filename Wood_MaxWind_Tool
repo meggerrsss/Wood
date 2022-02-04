@@ -43,12 +43,12 @@ class Tool (SmartScript.SmartScript):
         modelrunNAM=varDict["NAM Run:"]
         modelrunGFS25=varDict["GFS25 Run:"]
                 
-        modelTRDPS = None
-        modelTHRDPS = None
-        modelTGDPS = None
-        modelTNAM12 = None
-        modelTGFS25 = None
-        modelTNAM32 = None
+        modelWRDPS = None
+        modelWHRDPS = None
+        modelWGDPS = None
+        modelWNAM12 = None
+        modelWGFS25 = None
+        modelWNAM32 = None
         
         # Assigning previous or latest model runs
         if modelrunRDPS=="Latest":
@@ -128,53 +128,53 @@ class Tool (SmartScript.SmartScript):
         WNAM=np.where(np.logical_and.reduce([np.equal(NAM12Speed, 0)]), modelWNAM32, WNAM)
         
         if MaxorMin == "Max":
-            Temp = TGDPS
-            if (THRDPS == None and TRDPS != None and TGFS25 != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
-            if (THRDPS != None and TRDPS != None and TGFS25 != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(THRDPS, Temp)]), THRDPS, Temp)
-            if (TRDPS == None and THRDPS == None and TGFS25 != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
-            if (THRDPS != None and TRDPS != None and TGFS25 == None):
-                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(THRDPS, Temp)]), THRDPS, Temp)
-            if (THRDPS == None and TRDPS != None and TGFS25 == None):
-                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
-            if (THRDPS == None and TRDPS == None and TGFS25 == None):
-                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+            Temp = WGDPS
+            if (WHRDPS == None and WRDPS != None and WGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+            if (WHRDPS != None and WRDPS != None and WGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+            if (WRDPS == None and WHRDPS == None and WGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+            if (WHRDPS != None and WRDPS != None and WGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+            if (WHRDPS == None and WRDPS != None and WGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+            if (WHRDPS == None and WRDPS == None and WGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
 
         elif MaxorMin == "Min":
-            Temp = TGDPS
-            if (THRDPS == None and TRDPS != None and TGFS25 != None):
-                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TGFS25, Temp)]), TGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
-            if (THRDPS != None and TRDPS != None and TGFS25 != None):
-                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TGFS25, Temp)]), TGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(THRDPS, Temp)]), THRDPS, Temp)
-            if (TRDPS == None and THRDPS == None and TGFS25 != None):
-                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TGFS25, Temp)]), TGFS25, Temp)
-            if (THRDPS != None and TRDPS != None and TGFS25 == None):
-                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(THRDPS, Temp)]), THRDPS, Temp)
-            if (THRDPS == None and TRDPS != None and TGFS25 == None):
-                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
-            if (THRDPS == None and TRDPS == None and TGFS25 == None):
-                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+            Temp = WGDPS
+            if (WHRDPS == None and WRDPS != None and WGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+            if (WHRDPS != None and WRDPS != None and WGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+            if (WRDPS == None and WHRDPS == None and WGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+            if (WHRDPS != None and WRDPS != None and WGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+            if (WHRDPS == None and WRDPS != None and WGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+            if (WHRDPS == None and WRDPS == None and WGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
             
         return Temp
 
