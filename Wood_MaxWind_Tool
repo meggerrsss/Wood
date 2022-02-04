@@ -1,0 +1,180 @@
+#----------------------------------------------------------------------------
+# This software is in the public domain, furnished "as is", without technical
+# support, and with no warranty, express or implied, as to its usefulness for
+# any purpose.
+#
+# Wood_WindMaxMin_Tool
+#
+# Author: Meghan Green
+# Feb 2, 2022
+# with inspiration from the MaxT tool
+#
+# This tool will output the max or min temps from all models available in the domain
+# ----------------------------------------------------------------------------
+
+ToolType = "numeric"
+WeatherElementEdited = "Wind"
+
+import numpy as np
+import SmartScript
+
+VariableList = [
+    ("Yes", "Yes", "radio", ["Yes", "Yes", "Yes"]),
+    ("Max or Min Model Wind:", "Max", "radio", ["Max", "Min"]),
+    ("RDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
+    ("HRDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
+    ("GDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
+    ("NAM Run:", "Latest", "radio", ["Latest", "Previous"]),
+    ("GFS25 Run:", "Latest", "radio", ["Latest", "Previous"]),
+    ]
+
+class Tool (SmartScript.SmartScript):
+    def __init__(self, dbss):
+        SmartScript.SmartScript.__init__(self, dbss)
+
+    def execute(self, Wind, GridTimeRange, varDict):
+       SITE=self.getSiteID()
+
+        yess=varDict["Yes"]
+        MaxorMin=varDict["Max or Min Model Winds:"]
+        modelrunRDPS=varDict["RDPS Run:"]
+        modelrunHRDPS=varDict["HRDPS Run:"]
+        modelrunGDPS=varDict["GDPS Run:"]
+        modelrunNAM=varDict["NAM Run:"]
+        modelrunGFS25=varDict["GFS25 Run:"]
+                
+        modelTRDPS = None
+        modelTHRDPS = None
+        modelTGDPS = None
+        modelTNAM12 = None
+        modelTGFS25 = None
+        modelTNAM32 = None
+        
+        # Assigning previous or latest model runs
+        if modelrunRDPS=="Latest":
+            modelWRDPS=self.findDatabase("RDPS", 0)
+        elif modelrunRDPS=="Previous":
+            modelWRDPS=self.findDatabase("RDPS", -1)
+       
+        if modelrunHRDPS=="Latest":
+            modelWHRDPS=self.findDatabase("HRDPS", 0)
+        elif modelrunHRDPS=="Previous":
+            modelWHRDPS=self.findDatabase("HRDPS", -1)
+        
+        if modelrunGDPS=="Latest":
+            modelWGDPS=self.findDatabase("GDPS", 0)
+        elif modelrunGDPS=="Previous":
+            modelWGDPS=self.findDatabase("GDPS", -1)
+ 
+        if modelrunNAM=="Latest":
+            modelWNAM32=self.findDatabase("NAM32", 0)
+            modelWNAM12=self.findDatabase("NAM12",0)
+        elif modelrunNAM=="Previous":
+            modelWNAM32=self.findDatabase("NAM32", -1)
+            modelWNAM12=self.findDatabase("NAM12",-1)
+       
+        if modelrunGFS25=="Latest":
+            modelWGFS25=self.findDatabase("GFS25", 0)
+        elif modelrunGFS25=="Previous":
+            modelWGFS25=self.findDatabase("GFS25", -1)
+        
+        WOfficial = None
+        WFcst = None
+        WRDPS = None
+        WHRDPS = None
+        WGDPS = None
+        WNAM12 = None
+        WGFS25 = None
+        WNAM32 = None
+        WNAM = None
+        
+        #Obtaining Model Data
+
+        if (yess == "Yes"):
+            try:
+                WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)
+            except:
+                pass
+        if (yess == "Yes"):
+            try:
+                WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)
+            except:
+                pass
+        if (yess == "Yes"):
+            try:
+                WGDPS = self.getGrids(modelWGDPS, "Wind", "SFC", GridTimeRange)
+            except:
+                pass
+        if (yess == "Yes"):
+            try:
+                WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)
+            except:
+                pass
+        if (yess == "Yes"):
+            try:
+                WGFS25 = self.getGrids(modelWGFS25, "Wind", "SFC", GridTimeRange)
+            except:
+                pass
+        if (yess == "Yes"):
+            try:
+                WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)
+            except:
+                pass
+
+        NAM12Speed = WNAM12[0]
+        NAM32Speed = WNAM32[0]   
+        WNAM12=self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)
+        WNAM32=self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)
+        WNAM=np.where(np.logical_and.reduce([np.equal(NAM12Speed, 0)]), modelWNAM32, WNAM)
+        
+        if MaxorMin == "Max":
+            Temp = TGDPS
+            if (THRDPS == None and TRDPS != None and TGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
+            if (THRDPS != None and TRDPS != None and TGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(THRDPS, Temp)]), THRDPS, Temp)
+            if (TRDPS == None and THRDPS == None and TGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
+            if (THRDPS != None and TRDPS != None and TGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(THRDPS, Temp)]), THRDPS, Temp)
+            if (THRDPS == None and TRDPS != None and TGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TGFS25, Temp)]), TGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(TRDPS, Temp)]), TRDPS, Temp)
+            if (THRDPS == None and TRDPS == None and TGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.greater(TNAM, Temp)]), TNAM, Temp)
+
+        elif MaxorMin == "Min":
+            Temp = TGDPS
+            if (THRDPS == None and TRDPS != None and TGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TGFS25, Temp)]), TGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
+            if (THRDPS != None and TRDPS != None and TGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TGFS25, Temp)]), TGFS25, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(THRDPS, Temp)]), THRDPS, Temp)
+            if (TRDPS == None and THRDPS == None and TGFS25 != None):
+                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TGFS25, Temp)]), TGFS25, Temp)
+            if (THRDPS != None and TRDPS != None and TGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(THRDPS, Temp)]), THRDPS, Temp)
+            if (THRDPS == None and TRDPS != None and TGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(TRDPS, Temp)]), TRDPS, Temp)
+            if (THRDPS == None and TRDPS == None and TGFS25 == None):
+                Temp = np.where(np.logical_and.reduce([np.less(TNAM, Temp)]), TNAM, Temp)
+            
+        return Temp
+
