@@ -9,7 +9,7 @@
 # Feb 2, 2022
 # with inspiration from the MaxT tool
 #
-# This tool will output the max or min temps from all models available in the domain
+# This tool will output the max or min wind speds from all models available in the domain
 # ----------------------------------------------------------------------------
 
 
@@ -17,9 +17,11 @@ HideTool=1
 
 ToolType = "numeric"
 WeatherElementEdited = "Wind"
+ScreenList=["VECTOR"]
 
 import numpy as np
 import SmartScript
+import LogStream
 
 VariableList = [
     ("Yes", "Yes", "radio", ["Yes", "Yes", "Yes"]),
@@ -111,6 +113,8 @@ class Tool (SmartScript.SmartScript):
         if (yess == "Yes"):
             try:
                 WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
+                WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
+                WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), modelWNAM32, WNAM)
             except:
                 pass
         if (yess == "Yes"):
@@ -124,9 +128,7 @@ class Tool (SmartScript.SmartScript):
             except:
                 pass
 
-        WNAM12=self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
-        WNAM32=self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
-        WNAM=np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), modelWNAM32, WNAM)
+        
 
         dir = self.getGrids(modelWind, "Wind", "SFC", GridTimeRange)[1]
         
