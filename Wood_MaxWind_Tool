@@ -9,11 +9,11 @@
 # Feb 2, 2022
 # with inspiration from the MaxT tool
 #
-# This tool will output the max or min wind speds from all models available in the domain
+# This tool will output the max or min wind speeds from all models available in the domain
 # ----------------------------------------------------------------------------
 
 
-HideTool=1
+HideTool=0
 
 ToolType = "numeric"
 WeatherElementEdited = "Wind"
@@ -41,7 +41,7 @@ class Tool (SmartScript.SmartScript):
         SITE=self.getSiteID()
 
         yess=varDict["Yes"]
-        MaxorMin=varDict["Max or Min Model Winds:"]
+        MaxorMin=varDict["Max or Min Model Wind:"]
         modelrunRDPS=varDict["RDPS Run:"]
         modelrunHRDPS=varDict["HRDPS Run:"]
         modelrunGDPS=varDict["GDPS Run:"]
@@ -73,10 +73,10 @@ class Tool (SmartScript.SmartScript):
  
         if modelrunNAM=="Latest":
             modelWNAM32=self.findDatabase("NAM32", 0)
-            modelWNAM12=self.findDatabase("NAM12",0)
+            modelWNAM12=self.findDatabase("NAM12", 0)
         elif modelrunNAM=="Previous":
             modelWNAM32=self.findDatabase("NAM32", -1)
-            modelWNAM12=self.findDatabase("NAM12",-1)
+            modelWNAM12=self.findDatabase("NAM12", -1)
        
         if modelrunGFS25=="Latest":
             modelWGFS25=self.findDatabase("GFS25", 0)
@@ -92,9 +92,16 @@ class Tool (SmartScript.SmartScript):
         WGFS25 = None
         WNAM32 = None
         WNAM = None
+        Temp = None
         
         #Obtaining Model Data
 
+        if (yess == "Yes"):
+            try:
+                WFcst=self.getGrids("Fcst", "Wind", "SFC",  GridTimeRange)
+                #LogStream.logProblem("Fcst Wind",WFcst)
+            except:
+                pass
         if (yess == "Yes"):
             try:
                 WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)[0]
@@ -113,8 +120,6 @@ class Tool (SmartScript.SmartScript):
         if (yess == "Yes"):
             try:
                 WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
-                WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
-                WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), modelWNAM32, WNAM)
             except:
                 pass
         if (yess == "Yes"):
@@ -125,12 +130,18 @@ class Tool (SmartScript.SmartScript):
         if (yess == "Yes"):
             try:
                 WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
+                WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), WNAM32, WNAM)
+                #WNAM = WNAM32 #testing something
+                LogStream.logProblem(WNAM32, NAM12, WNAM)
             except:
                 pass
 
         
+        Temp=WFcst[0]
+        dir=WFcst[1]
+        LogStream.logProblem(Temp)
 
-        dir = self.getGrids(modelWind, "Wind", "SFC", GridTimeRange)[1]
+        #dir = self.getGrids(modelWind, "Wind", "SFC", GridTimeRange)[1]
         
         if MaxorMin == "Max":
             Temp = WGDPS
@@ -138,24 +149,30 @@ class Tool (SmartScript.SmartScript):
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS != None and WRDPS != None and WGFS25 != None):
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WRDPS == None and WHRDPS == None and WGFS25 != None):
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS != None and WRDPS != None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS == None and WRDPS != None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS == None and WRDPS == None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                LogStream.logProblem(Temp)
 
         elif MaxorMin == "Min":
             Temp = WGDPS
@@ -163,23 +180,29 @@ class Tool (SmartScript.SmartScript):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS != None and WRDPS != None and WGFS25 != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WRDPS == None and WHRDPS == None and WGFS25 != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS != None and WRDPS != None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS == None and WRDPS != None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+                LogStream.logProblem(Temp)
             if (WHRDPS == None and WRDPS == None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+                LogStream.logProblem(Temp)
             
         return (Temp, dir)
 
