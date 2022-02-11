@@ -22,9 +22,10 @@ ScreenList=["VECTOR"]
 import numpy as np
 import SmartScript
 import LogStream
+import time
 
 VariableList = [
-    ("Yes", "Yes", "radio", ["Yes", "Yes", "Yes"]),
+    #("Yes", "Yes", "radio", ["Yes", "Yes", "Yes"]),
     ("Max or Min Model Wind:", "Max", "radio", ["Max", "Min"]),
     ("RDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
     ("HRDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
@@ -39,14 +40,17 @@ class Tool (SmartScript.SmartScript):
 
     def execute(self, Wind, GridTimeRange, varDict):
         SITE=self.getSiteID()
+        tic = time.perf_counter()
 
+        # input variables from forecaster running tool
         MaxorMin=varDict["Max or Min Model Wind:"]
-        modelrunRDPS=varDict["RDPS Run:"]
-        modelrunHRDPS=varDict["HRDPS Run:"]
-        modelrunGDPS=varDict["GDPS Run:"]
-        modelrunNAM=varDict["NAM Run:"]
-        modelrunGFS25=varDict["GFS25 Run:"]
-                
+        modelrunRDPS = varDict["RDPS Run:"]
+        modelrunHRDPS = varDict["HRDPS Run:"]
+        modelrunGDPS = varDict["GDPS Run:"]
+        modelrunNAM = varDict["NAM Run:"]
+        modelrunGFS25 = varDict["GFS25 Run:"]
+
+        # initializing imports of database from each model
         modelWRDPS = None
         modelWHRDPS = None
         modelWGDPS = None
@@ -54,21 +58,24 @@ class Tool (SmartScript.SmartScript):
         modelWGFS25 = None
         modelWNAM32 = None
         
-        # Assigning previous or latest model runs
-        if modelrunRDPS=="Latest":
-            modelWRDPS=self.findDatabase("RDPS", 0)
-        elif modelrunRDPS=="Previous":
-            modelWRDPS=self.findDatabase("RDPS", -1)
-       
-        if modelrunHRDPS=="Latest":
-            modelWHRDPS=self.findDatabase("HRDPS", 0)
-        elif modelrunHRDPS=="Previous":
-            modelWHRDPS=self.findDatabase("HRDPS", -1)
+        # Assigning previous or latest model runs, prev to have the previous model on hand anyways for any gaps
+        if modelrunRDPS == "Latest":
+            modelWRDPS = self.findDatabase("RDPS", 0)
+        elif modelrunRDPS == "Previous":
+            modelWRDPS = self.findDatabase("RDPS", -1)
+        modelWRDPSprev = self.findDatabase("RDPS", -1)
+          
+        if modelrunHRDPS == "Latest":
+            modelWHRDPS = self.findDatabase("HRDPS", 0)
+        elif modelrunHRDPS == "Previous":
+            modelWHRDPS = self.findDatabase("HRDPS", -1)
+        modelWHRDPSprev = self.findDatabase("HRDPS", -1)
         
         if modelrunGDPS=="Latest":
             modelWGDPS=self.findDatabase("GDPS", 0)
         elif modelrunGDPS=="Previous":
             modelWGDPS=self.findDatabase("GDPS", -1)
+        modelWGDPSprev = self.findDatabase("GDPS", -1)
  
         if modelrunNAM=="Latest":
             modelWNAM32=self.findDatabase("NAM32", 0)
@@ -76,13 +83,17 @@ class Tool (SmartScript.SmartScript):
         elif modelrunNAM=="Previous":
             modelWNAM32=self.findDatabase("NAM32", -1)
             modelWNAM12=self.findDatabase("NAM12", -1)
+        modelWNAM32prev=self.findDatabase("NAM32", -1)
+        modelWNAM12prev=self.findDatabase("NAM12", -1)
        
         if modelrunGFS25=="Latest":
             modelWGFS25=self.findDatabase("GFS25", 0)
         elif modelrunGFS25=="Previous":
             modelWGFS25=self.findDatabase("GFS25", -1)
-        
-        WOfficial = None
+        modelWGFS25prev=self.findDatabase("GFS25", -1)
+
+        # initializing imports of direct wind data from each model and forecast
+        #WOfficial = None
         WFcst = None
         WRDPS = None
         WHRDPS = None
@@ -93,7 +104,9 @@ class Tool (SmartScript.SmartScript):
         WNAM = None
         Temp = None
         
-        #Obtaining Model Data
+        # obtaining Model Data
+        # model imports are using [0] in these lines to just take speed, 
+        # Fcst is importing the full vector to hold onto direction
         try:
             WFcst=self.getGrids("Fcst", "Wind", "SFC",  GridTimeRange)
             #LogStream.logProblem("Fcst Wind",WFcst)
@@ -101,7 +114,7 @@ class Tool (SmartScript.SmartScript):
             pass
         try:
             WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)[0]
-        except AttributeError:
+        except:
             pass
         try:
             WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)[0]
@@ -121,18 +134,19 @@ class Tool (SmartScript.SmartScript):
             pass
         try:
             WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
+          
+            # where NAM12 is empty, replace with NAM32
             WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), WNAM32, WNAM12)
-            #WNAM = WNAM32 # for when NAM12 is acting up, enable this and ignore iet
+          
+            #WNAM = WNAM32 # for when NAM12 is acting up, enable this and ignore NAM12
             #LogStream.logProblem(WNAM32, WNAM12, WNAM)
         except:
             pass
 
-        
+        # separating Fcst into speed and direction
         Temp=WFcst[0]
         dir=WFcst[1]
         #LogStream.logProblem(Temp)
-
-        #dir = self.getGrids(modelWind, "Wind", "SFC", GridTimeRange)[1]
         
         if MaxorMin == "Max":
             Temp = WGDPS
@@ -194,6 +208,8 @@ class Tool (SmartScript.SmartScript):
             if (WHRDPS == None and WRDPS == None and WGFS25 == None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 #LogStream.logProblem(Temp)
-            
+
+        toc = time.perf_counter()
+        LogStream.logProblem(toc-tic)
         return (Temp, dir)
 
