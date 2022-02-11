@@ -40,7 +40,6 @@ class Tool (SmartScript.SmartScript):
     def execute(self, Wind, GridTimeRange, varDict):
         SITE=self.getSiteID()
 
-        yess=varDict["Yes"]
         MaxorMin=varDict["Max or Min Model Wind:"]
         modelrunRDPS=varDict["RDPS Run:"]
         modelrunHRDPS=varDict["HRDPS Run:"]
@@ -95,46 +94,38 @@ class Tool (SmartScript.SmartScript):
         Temp = None
         
         #Obtaining Model Data
-
-        if (yess == "Yes"):
-            try:
-                WFcst=self.getGrids("Fcst", "Wind", "SFC",  GridTimeRange)
-                #LogStream.logProblem("Fcst Wind",WFcst)
-            except:
-                pass
-        if (yess == "Yes"):
-            try:
-                WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)[0]
-            except:
-                pass
-        if (yess == "Yes"):
-            try:
-                WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)[0]
-            except:
-                pass
-        if (yess == "Yes"):
-            try:
-                WGDPS = self.getGrids(modelWGDPS, "Wind", "SFC", GridTimeRange)[0]
-            except:
-                pass
-        if (yess == "Yes"):
-            try:
-                WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
-            except:
-                pass
-        if (yess == "Yes"):
-            try:
-                WGFS25 = self.getGrids(modelWGFS25, "Wind", "SFC", GridTimeRange)[0]
-            except:
-                pass
-        if (yess == "Yes"):
-            try:
-                WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
-                WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), WNAM32, WNAM12)
-                #WNAM = WNAM32 # for when NAM12 is acting up, enable this and ignore iet
-                #LogStream.logProblem(WNAM32, WNAM12, WNAM)
-            except:
-                pass
+        try:
+            WFcst=self.getGrids("Fcst", "Wind", "SFC",  GridTimeRange)
+            #LogStream.logProblem("Fcst Wind",WFcst)
+        except:
+            pass
+        try:
+            WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)[0]
+        except AttributeError:
+            pass
+        try:
+            WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)[0]
+        except:
+            pass
+        try:
+            WGDPS = self.getGrids(modelWGDPS, "Wind", "SFC", GridTimeRange)[0]
+        except:
+            pass
+        try:
+            WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
+        except:
+            pass
+        try:
+            WGFS25 = self.getGrids(modelWGFS25, "Wind", "SFC", GridTimeRange)[0]
+        except:
+            pass
+        try:
+            WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
+            WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), WNAM32, WNAM12)
+            #WNAM = WNAM32 # for when NAM12 is acting up, enable this and ignore iet
+            #LogStream.logProblem(WNAM32, WNAM12, WNAM)
+        except:
+            pass
 
         
         Temp=WFcst[0]
