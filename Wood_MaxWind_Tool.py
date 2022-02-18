@@ -112,33 +112,78 @@ class Tool (SmartScript.SmartScript):
             #LogStream.logProblem("Fcst Wind",WFcst)
         except:
             pass
+
+        # importing RDPS wind  
         try:
             WRDPS = self.getGrids(modelWRDPS, "Wind", "SFC", GridTimeRange)[0]
         except:
             pass
+        if (WRDPS == None and modelrunRDPS == "Latest"):
+            try:
+                WRDPS = self.getGrids(modelWRDPSprev, "Wind", "SFC", GridTimeRange)[0]
+            except:
+                pass
+
+        # importing HRDPS wind  
         try:
             WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)[0]
         except:
             pass
+        if (WHRDPS == None and modelrunHRDPS == "Latest"):
+            try:
+                WHRDPS = self.getGrids(modelWHRDPSprev, "Wind", "SFC", GridTimeRange)[0]
+            except:
+                pass
+
+        # importing GDPS wind  
         try:
             WGDPS = self.getGrids(modelWGDPS, "Wind", "SFC", GridTimeRange)[0]
         except:
             pass
+        if (WGDPS == None and modelrunGDPS == "Latest"):
+            try:
+                WGDPS = self.getGrids(modelWGDPSprev, "Wind", "SFC", GridTimeRange)[0]
+            except:
+                pass
+
+        # importing GFS wind  
+        try:
+            WGFS = self.getGrids(modelWGFS, "Wind", "SFC", GridTimeRange)[0]
+        except:
+            pass
+        if (WGFS == None and modelrunGFS == "Latest"):
+            try:
+                WGFS = self.getGrids(modelWGFSprev, "Wind", "SFC", GridTimeRange)[0]
+            except:
+                pass
+
+        # importing NAM12 wind  
         try:
             WNAM12 = self.getGrids(modelWNAM12, "Wind", "SFC", GridTimeRange)[0]
         except:
             pass
-        try:
-            WGFS25 = self.getGrids(modelWGFS25, "Wind", "SFC", GridTimeRange)[0]
-        except:
-            pass
+        if (WNAM12 == None and modelrunNAM == "Latest"):
+            try:
+                WNAM12 = self.getGrids(modelWNAM12prev, "Wind", "SFC", GridTimeRange)[0]
+            except:
+                pass
+              
+        # importing NAM32 wind  - 
         try:
             WNAM32 = self.getGrids(modelWNAM32, "Wind", "SFC", GridTimeRange)[0]
-          
+        except:
+            pass
+        if (WNAM32 == None and modelrunNAM == "Latest"):
+            try:
+                WNAM32 = self.getGrids(modelWNAM32prev, "Wind", "SFC", GridTimeRange)[0]
+            except:
+                pass
+              
+        try:          
             # where NAM12 is empty, replace with NAM32
             WNAM = np.where(np.logical_and.reduce([np.equal(WNAM12, 0)]), WNAM32, WNAM12)
           
-            #WNAM = WNAM32 # for when NAM12 is acting up, enable this and ignore NAM12
+            #WNAM = WNAM32 # for when NAM12 is acting up, enable this and ignore NAM12 entirely
             #LogStream.logProblem(WNAM32, WNAM12, WNAM)
         except:
             pass
@@ -181,31 +226,31 @@ class Tool (SmartScript.SmartScript):
 
         elif MaxorMin == "Min":
             Temp = WGDPS
-            if (WHRDPS == None and WRDPS != None and WGFS25 != None):
+            if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS != None and WRDPS != None and WGFS25 != None):
+            if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WRDPS == None and WHRDPS == None and WGFS25 != None):
+            if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS != None and WRDPS != None and WGFS25 == None):
+            if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS == None and WRDPS != None and WGFS25 == None):
+            if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS == None and WRDPS == None and WGFS25 == None):
+            if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 #LogStream.logProblem(Temp)
 
