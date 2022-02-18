@@ -193,82 +193,100 @@ class Tool (SmartScript.SmartScript):
         dir=WFcst[1]
         #LogStream.logProblem(Temp)
 
-        # better way probably, if statements all get checked in a row anyways
+         better way probably, if statements all get checked in a row anyways
+        if MaxorMin == "Max":
+            if WRDPS != None:
+                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+                #LogStream.logProblem(Temp)
+            if WHRDPS != None:
+                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+                #LogStream.logProblem(Temp)
+            if WGDPS != None:
+                Temp = np.where(np.logical_and.reduce([np.greater(WGDPS, Temp)]), WGDPS, Temp)
+                #LogStream.logProblem(Temp)
+            if WGFS25 != None:
+                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+                #LogStream.logProblem(Temp)
+            if WNAM != None:
+                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+                #LogStream.logProblem(Temp)
+        
         #if MaxorMin == "Max":
-        #    if WRDPS != None:
+        #    if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
         #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
         #        #LogStream.logProblem(Temp)
-        #    if WHRDPS != None:
+        #    if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
         #        Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
         #        #LogStream.logProblem(Temp)
-        #    if WGDPS != None:
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WGDPS, Temp)]), WGDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if WGFS25 != None:
+        #    if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
         #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
         #        #LogStream.logProblem(Temp)
-        #    if WNAM != None:
+        #    if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
         #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
         #        #LogStream.logProblem(Temp)
-        
-        if MaxorMin == "Max":
-            if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
+
+              
+        elif MaxorMin == "Min":
+            if WRDPS != None:
+                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+            if WHRDPS != None:
+                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
+            if WGDPS != None:
+                Temp = np.where(np.logical_and.reduce([np.less(WGDPS, Temp)]), WGDPS, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+            if WGFS25 != None:
+                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
                 #LogStream.logProblem(Temp)
-            if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-                #LogStream.logProblem(Temp)
-            if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
+            if WNAM != None:
+                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 #LogStream.logProblem(Temp)
 
-        elif MaxorMin == "Min":
-            if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-                #LogStream.logProblem(Temp)
-            if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
-                #LogStream.logProblem(Temp)
-            if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
-                #LogStream.logProblem(Temp)
-            if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
-                #LogStream.logProblem(Temp)
-            if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-                Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-                #LogStream.logProblem(Temp)
-            if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
-                Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-                #LogStream.logProblem(Temp)
+        #elif MaxorMin == "Min":
+        #    if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
+        #        #LogStream.logProblem(Temp)
+        #    if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
+        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
+        #        #LogStream.logProblem(Temp)
 
         #toc = time.perf_counter()
         #LogStream.logProblem(toc-tic)
