@@ -193,7 +193,7 @@ class Tool (SmartScript.SmartScript):
         dir=WFcst[1]
         #LogStream.logProblem(Temp)
 
-         better way probably, if statements all get checked in a row anyways
+        #better way probably, if statements all get checked in a row anyways
         if MaxorMin == "Max":
             if WRDPS != None:
                 Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
