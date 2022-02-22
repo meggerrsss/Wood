@@ -97,6 +97,7 @@ class Tool (SmartScript.SmartScript):
         WFcst = None
         WRDPS = None
         WHRDPS = None
+        THRDPS = None
         WGDPS = None
         WNAM12 = None
         WGFS25 = None
@@ -127,13 +128,16 @@ class Tool (SmartScript.SmartScript):
         # importing HRDPS wind  
         try:
             WHRDPS = self.getGrids(modelWHRDPS, "Wind", "SFC", GridTimeRange)[0]
+            THRDPS = self.getGrids(modelWHRDPS, "T", "SFC", GridTimeRange)
         except:
             pass
         if (WHRDPS == None and modelrunHRDPS == "Latest"):
             try:
                 WHRDPS = self.getGrids(modelWHRDPSprev, "Wind", "SFC", GridTimeRange)[0]
+                THRDPS = self.getGrids(modelWHRDPSprev, "T", "SFC", GridTimeRange)
             except:
                 pass
+
 
         # importing GDPS wind  
         try:
@@ -247,7 +251,7 @@ class Tool (SmartScript.SmartScript):
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
                 #LogStream.logProblem(Temp)
             if WHRDPS != None:
-                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp), np.greater(THRDPS, -60)]), WHRDPS, Temp)
                 #LogStream.logProblem(Temp)
             if WGDPS != None:
                 Temp = np.where(np.logical_and.reduce([np.less(WGDPS, Temp)]), WGDPS, Temp)
@@ -291,4 +295,3 @@ class Tool (SmartScript.SmartScript):
         #toc = time.perf_counter()
         #LogStream.logProblem(toc-tic)
         return (Temp, dir)
-
