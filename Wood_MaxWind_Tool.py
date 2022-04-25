@@ -22,10 +22,8 @@ ScreenList=["VECTOR"]
 import numpy as np
 import SmartScript
 import LogStream
-import time
 
 VariableList = [
-    #("Yes", "Yes", "radio", ["Yes", "Yes", "Yes"]),
     ("Max or Min Model Wind:", "Max", "radio", ["Max", "Min"]),
     ("RDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
     ("HRDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
@@ -40,7 +38,6 @@ class Tool (SmartScript.SmartScript):
 
     def execute(self, Wind, GridTimeRange, varDict):
         SITE=self.getSiteID()
-        #tic = time.perf_counter()
 
         # input variables from forecaster running tool
         MaxorMin=varDict["Max or Min Model Wind:"]
@@ -197,13 +194,13 @@ class Tool (SmartScript.SmartScript):
         dir=WFcst[1]
         #LogStream.logProblem(Temp)
 
-        #better way probably, if statements all get checked in a row anyways
+        #Find model max wind speed. For HRDPS, using THRDPS to determine where that model cuts off so we can discard those null/suspiciously high band of wind speeds. Model cutoff values for temperature are -62 which is easiest to query.
         if MaxorMin == "Max":
             if WRDPS != None:
                 Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
                 #LogStream.logProblem(Temp)
             if WHRDPS != None:
-                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
+                Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp), np.greater(THRDPS, -60)]), WHRDPS, Temp)
                 #LogStream.logProblem(Temp)
             if WGDPS != None:
                 Temp = np.where(np.logical_and.reduce([np.greater(WGDPS, Temp)]), WGDPS, Temp)
@@ -214,38 +211,8 @@ class Tool (SmartScript.SmartScript):
             if WNAM != None:
                 Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
                 #LogStream.logProblem(Temp)
-        
-        #if MaxorMin == "Max":
-        #    if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WHRDPS, Temp)]), WHRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WGFS25, Temp)]), WGFS25, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WRDPS, Temp)]), WRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.greater(WNAM, Temp)]), WNAM, Temp)
-        #        #LogStream.logProblem(Temp)
 
-              
+        #Find model min wind speed. For HRDPS, using THRDPS to determine where that model cuts off so we can discard those null wind speeds.      
         elif MaxorMin == "Min":
             if WRDPS != None:
                 Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
@@ -263,35 +230,4 @@ class Tool (SmartScript.SmartScript):
                 Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
                 #LogStream.logProblem(Temp)
 
-        #elif MaxorMin == "Min":
-        #    if (WHRDPS == None and WRDPS != None and WGFS25 != None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS != None and WRDPS != None and WGFS25 != None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WRDPS == None and WHRDPS == None and WGFS25 != None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WGFS25, Temp)]), WGFS25, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS != None and WRDPS != None and WGFS25 == None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WHRDPS, Temp)]), WHRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS == None and WRDPS != None and WGFS25 == None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-        #        Temp = np.where(np.logical_and.reduce([np.less(WRDPS, Temp)]), WRDPS, Temp)
-        #        #LogStream.logProblem(Temp)
-        #    if (WHRDPS == None and WRDPS == None and WGFS25 == None and WNAM != None):
-        #        Temp = np.where(np.logical_and.reduce([np.less(WNAM, Temp)]), WNAM, Temp)
-        #        #LogStream.logProblem(Temp)
-
-        #toc = time.perf_counter()
-        #LogStream.logProblem(toc-tic)
         return (Temp, dir)
