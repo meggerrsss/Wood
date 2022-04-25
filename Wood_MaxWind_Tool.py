@@ -25,6 +25,10 @@ import LogStream
 
 VariableList = [
     ("Max or Min Model Wind:", "Max", "radio", ["Max", "Min"]),
+    ("Include Off Wind:", "No", "radio", ["Yes", "No"]),
+    ("Include Fcst Wind:", "Yes", "radio", ["Yes", "No"]),
+    #("Compare Against Off or Fcst Wind:", "No", "radio", ["Off", "Fcst", "Neither"]),
+    ("Direction:", "Fcst", "radio", ["Off", "Fcst"]),
     ("RDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
     ("HRDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
     ("GDPS Run:", "Latest", "radio", ["Latest", "Previous"]),
@@ -41,6 +45,9 @@ class Tool (SmartScript.SmartScript):
 
         # input variables from forecaster running tool
         MaxorMin=varDict["Max or Min Model Wind:"]
+        IncludeOff = varDict["Include Off Wind:"]
+        IncludeFcst = varDict["Include Fcst Wind:"]
+        dirPref = varDict["Direction:"]
         modelrunRDPS = varDict["RDPS Run:"]
         modelrunHRDPS = varDict["HRDPS Run:"]
         modelrunGDPS = varDict["GDPS Run:"]
@@ -90,7 +97,7 @@ class Tool (SmartScript.SmartScript):
         modelWGFS25prev=self.findDatabase("GFS25", -1)
 
         # initializing imports of direct wind data from each model and forecast
-        #WOfficial = None
+        WOff = None
         WFcst = None
         WRDPS = None
         WHRDPS = None
@@ -104,7 +111,13 @@ class Tool (SmartScript.SmartScript):
         
         # obtaining Model Data
         # model imports are using [0] in these lines to just take speed, 
-        # Fcst is importing the full vector to hold onto direction
+        # Off/Fcst is importing the full vector to hold onto direction
+        try:
+            WOff=self.getGrids("Off", "Wind", "SFC",  GridTimeRange)
+            #LogStream.logProblem("Off Wind",WFcst)
+        except:
+            pass
+      
         try:
             WFcst=self.getGrids("Fcst", "Wind", "SFC",  GridTimeRange)
             #LogStream.logProblem("Fcst Wind",WFcst)
@@ -190,9 +203,17 @@ class Tool (SmartScript.SmartScript):
             pass
 
         # separating Fcst into speed and direction
-        Temp=WFcst[0]
-        dir=WFcst[1]
+        if dirPref == "Fcst": dir=WFcst[1]
+        if dirPref == "Off": dir=WOff[1]
         #LogStream.logProblem(Temp)
+
+        # initializing to a first model to compare:
+
+        if IncludeFcst == "Yes": Temp = WFcst[0]
+        if IncludeFcst == "No" and IncludeOff == "Yes": Temp = WOff[0]
+        if IncludeFcst == "No" and IncludeOff == "No": Temp = WRDPS 
+          
+          #Temp=WFcst[0]
 
         #Find model max wind speed. For HRDPS, using THRDPS to determine where that model cuts off so we can discard those null/suspiciously high band of wind speeds. Model cutoff values for temperature are -62 which is easiest to query.
         if MaxorMin == "Max":
