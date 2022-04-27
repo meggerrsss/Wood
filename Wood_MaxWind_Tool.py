@@ -207,11 +207,22 @@ class Tool (SmartScript.SmartScript):
         if dirPref == "Off": dir=WOff[1]
         #LogStream.logProblem(Temp)
 
-        # initializing to a first model to compare:
+        # initializing to a first model to compare against:
 
         if IncludeFcst == "Yes": Temp = WFcst[0]
-        if IncludeFcst == "No" and IncludeOff == "Yes": Temp = WOff[0]
-        if IncludeFcst == "No" and IncludeOff == "No": Temp = WRDPS 
+        elif IncludeFcst == "No" and IncludeOff == "Yes": Temp = WOff[0]
+        elif IncludeFcst == "No" and IncludeOff == "No": 
+          if WRDPS != None:
+            Temp = WRDPS 
+          elif WHRDPS != None:
+            Temp = WHRDPS
+          elif WGDPS != None:
+            Temp = WGDPS
+          elif WGFS25 != None:
+            Temp = WGFS25
+          elif WNAM != None:
+            Temp = WNAM
+            
           
           #Temp=WFcst[0]
 
