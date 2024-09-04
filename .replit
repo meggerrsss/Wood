@@ -1,2 +1,2 @@
-language = "bash"
 run = ""
+entrypoint = "main.sh"
