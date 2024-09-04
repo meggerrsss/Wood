@@ -1,0 +1,22 @@
+FNL56 "Labrador City" 52.96 -66.67 YWK
+FNL57 "Churchill Falls" 53.53 -64.72 ZUM
+FNL58 "Central Labrador" 53.25 -62.39 ***
+FNL59 "East of Northwest River" 53.64 -60.88 YYR
+FNL60 "Southeast of Happy Valley Goose Bay" 52.90 -60.20 YYR
+FNL61 "Cartwright" 53.41 -57.27 WCA
+FNL62 "Port Hope Simpson" 52.60 -56.43 PHS
+FNL63 "Northern Peninsula North" 51.05 -56.29 YAY
+FNL64 "Northern Peninsula South" 50.30 -57.30 WDH
+FNL65 "West Coast Gros Morne" 49.37 -57.49 YDF
+FNL66 "West Coast Stephenville" 48.58 -58.20 YJT
+FNL67 "West Coast Port Aux Basques" 47.95 -58.93 XWR
+FNL68 "Baie Verte Peninsula" 49.65 -56.43 SPR
+FNL69 "Buchans" 48.88 -56.56 ***
+FNL70 "Burgeo and North" 48.45 -57.40 WDI
+FNL71 "Grand Falls" 49.05 -55.30 ***
+FNL72 "Central South Coast" 48.33 -55.54 WDI
+FNL73 "Gander and north" 48.95 -54.23 ***
+FNL74 "Clarenville" 48.21 -53.85 YQX
+FNL75 "Burin" 47.09 -55.34 CLA
+FNL76 "Bay Roberts" 47.60 -53.43 XWT
+FNL77 "Salmonier" 47.23 -53.34 CAR

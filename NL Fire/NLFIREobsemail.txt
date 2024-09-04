@@ -1,0 +1,34 @@
+Station                        Prate_6hr            Prate_24hr
+Badger 48.97, -56.07                          0                    -
+Bonavista     48.67, -53.12                  0                    -
+Burgeo       47.62, -57.62                  0                    -
+Cartwright        53.72, -57.03             0.3                  -
+Churchill Falls  53.55, -64.10              1.0                  -
+Corner Brook    48.93, -57.92               0                    -
+Deer Lake   49.22, -57.40                   0                    -
+Englee          50.72, -56.12               -                    -
+Ferolle Point      51.02, -57.10            -                    -
+Gander Airport        48.95, -54.58         0.2                  -
+Gander International     48.95, -54.58      0                    -
+Goose Bay     53.32, -60.42                 0                    -
+Grates Cove      48.17, -52.93              -                    -
+Hopedale    55.45, -60.22                   -                    -
+La Scie  49.92, -55.67                      0                    -
+Makkovik       55.08, -59.18                0                    -
+Mary's Harbour        52.30, -55.83         0                    -
+Nain         56.55, -61.68                  -                    -
+Nain                           1.0                  -
+Pools Island           49.12, -53.58        -                    -
+Rocky Harbour  49.57, -57.88                -                    -
+Saglek                         -                    -
+St Anthony       51.38, -56.10              -                    -
+St Anthony                     0.3                  -
+St John's              47.62, -52.75        0                    -
+St Lawrence         46.92, -55.38           0                    -
+St. John's West Climate   47.52, -52.78     0                    -
+Stephenville            48.53, -58.55       0                    -
+Stephenville RCS               0                    -
+Terra Nova            48.53, -58.55         0                    -
+Twillingate       49.68, -54.80             0                    -
+Wabush          52.93, -66.87               1.0                  -
+Wreckhouse           47.72, -59.32          0                    -
